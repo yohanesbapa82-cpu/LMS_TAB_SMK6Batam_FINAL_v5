@@ -28,7 +28,7 @@ render_user_management = auth.render_user_management
 apply_custom_style = utils.apply_custom_style
 TAB_LOGO_SVG = utils.TAB_LOGO_SVG
 {TAB_LOGO_SVG}
-        <div style="margin-top:8px;">
+            <div style="margin-top:8px;">
             <div style="font-size:1.3rem;font-weight:700;color:#FF6B00;letter-spacing:2px;line-height:1;">TAB</div>
             <div style="font-size:0.68rem;color:#8CA0B8;letter-spacing:1.5px;margin-top:2px;">SMK NEGERI 6 BATAM</div>
             <div style="font-size:0.62rem;color:rgba(255,107,0,0.55);margin-top:1px;letter-spacing:1px;">TEKNIK ALAT BERAT</div>
