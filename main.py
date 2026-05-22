@@ -1,7 +1,6 @@
 """main.py — LMS TAB SMK N6 Batam V5"""
 import streamlit as st
 
-# Mengamankan konfigurasi halaman dengan menutup kurung ) di baris 9
 st.set_page_config(
     page_title="LMS TAB — SMK N 6 Batam",
     page_icon="⚙️",
@@ -12,7 +11,6 @@ st.set_page_config(
 from database import init_database
 from auth import init_session_state, show_login_page, isLoggedIn, isGuru, render_user_info, render_logout_button, render_user_management
 from utils import apply_custom_style, TAB_LOGO_SVG
-from dashboard import render_dashboard, render_statistik_page
 from materi import render_materi_page, render_materi_siswa
 from soal import render_soal_page
 from ujian import render_ujian_page
