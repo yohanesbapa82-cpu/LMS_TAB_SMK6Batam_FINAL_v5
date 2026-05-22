@@ -1,84 +1,99 @@
-"""
-main.py — LMS TAB SMK N6 Batam V5
-Fully optimized for Streamlit Community Cloud
-"""
+"""main.py — LMS TAB SMK N6 Batam V5"""
 import streamlit as st
 
-# 1. KONFIGURASI HALAMAN (Wajib di baris paling atas Streamlit)
 st.set_page_config(
     page_title="LMS TAB — SMK N 6 Batam",
     page_icon="⚙️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
-# 2. BYPASS IMPORT (Anti-IndentationError di Server Linux)
-import utils
-database = __import__('database')
-auth = __import__('auth')
-dashboard = __import__('dashboard')
-materi = __import__('materi')
-soal = __import__('soal')
-ujian = __import__('ujian')
-praktik = __import__('praktik')
-nilai = __import__('nilai')
+from database import init_database
+from auth import (
+    init_session_state, show_login_page, isLoggedIn, isGuru,
+    render_user_info, render_logout_button, render_user_management
+)
+from utils import apply_custom_style, TAB_LOGO_SVG
+from dashboard import render_dashboard, render_statistik_page
+from materi import render_materi_page, render_materi_siswa
+from soal import render_soal_page
+from ujian import render_ujian_page
+from praktik import render_praktik_page
+from nilai import render_nilai_page
 
-# 3. INITIALIZE DATABASE & SESSION
-database.init_database()
-auth.init_session_state()
+init_database()
+init_session_state()
+apply_custom_style()
 
-# 4. LOGIC TAMPILAN (LOGIN ATAU DASHBOARD)
-if not auth.isLoggedIn():
-    # Jalankan styling bawaan tema industri
-    utils.apply_custom_style()
-    
-    col_l, col_c, col_r = st.columns([1, 1.3, 1])
-    with col_c:
-        # Kotak Header Login (Ditutup dengan rapi dan aman)
-        html_login = f"""
-        <div style="text-align:center;padding:2rem 0 1.5rem;background:linear-gradient(135deg,#0D1B2A,#1C2E40);border-radius:18px;border:1px solid rgba(255,140,0,.25);margin-bottom:1.2rem;box-shadow:0 8px 32px rgba(0,0,0,.3);">
-            <div style="border-bottom:1px solid rgba(255,140,0,.2);padding-bottom:1rem;margin-bottom:1rem;">{utils.TAB_LOGO_SVG}</div>
-            <h2 style="color:#FF8C00;margin:0;font-weight:700;font-size:1.5rem;">LMS TEKNIK ALAT BERAT</h2>
-            <p style="color:#A0B4C8;margin:5px 0 0;font-size:0.9rem;">SMK Negeri 6 Batam</p>
+if not isLoggedIn():
+    show_login_page()
+    st.stop()
+
+# ── SIDEBAR ───────────────────────────────────────────────────────────────────
+with st.sidebar:
+
+    # Logo TAB (Inden blok HTML multi-line telah dibersihkan secara presisi)
+    st.markdown(f"""
+    <div style="text-align:center;padding:20px 0 14px;">
+        {TAB_LOGO_SVG}
+        <div style="margin-top:8px;">
+            <div style="font-size:1.3rem;font-weight:700;color:#FF6B00;letter-spacing:2px;line-height:1;">TAB</div>
+            <div style="font-size:0.68rem;color:#8CA0B8;letter-spacing:1.5px;margin-top:2px;">SMK NEGERI 6 BATAM</div>
+            <div style="font-size:0.62rem;color:rgba(255,107,0,0.55);margin-top:1px;letter-spacing:1px;">TEKNIK ALAT BERAT</div>
         </div>
-        """
-        st.markdown(html_login, unsafe_allow_html=True)
-        
-        # Panggil fungsi bawaan auth untuk merender form input & tombol login
-        auth.show_login_page()
+    </div>
+    """, unsafe_allow_html=True)
 
-else:
-    # JIKA USER SUDAH LOGIN, TAMPILKAN NAVIGASI UTAMA
-    utils.apply_custom_style()
-    
-    # Render Informasi User di Sidebar Atas
-    auth.render_user_info()
-    
-    # Menu Navigasi sesuai Role
-    is_guru = auth.isGuru()
-    
-    if is_guru:
-        menu_options = ["🏠 Dashboard", "📚 Kelola Materi", "📝 Bank Soal", "⚙️ Ujian Teori", "🚜 Penilaian Praktik", "📊 Rekap Nilai", "👥 Kelola Pengguna"]
+    st.divider()
+    render_user_info()
+    st.divider()
+
+    if isGuru():
+        st.markdown('<p style="font-size:0.65rem;font-weight:700;letter-spacing:2px;color:rgba(255,107,0,0.55);margin:0 0 4px 2px;">MENU UTAMA</p>', unsafe_allow_html=True)
+        page = st.radio("nav_g", [
+            "🏠   Dashboard",
+            "📚   Materi & Jobsheet",
+            "❓   Bank Soal",
+            "📝   Kelola Ujian",
+            "🔧   Penilaian Praktik",
+            "📊   Nilai Akhir",
+            "📈   Statistik Kelas",
+        ], label_visibility="collapsed")
+        st.markdown('<p style="font-size:0.65rem;font-weight:700;letter-spacing:2px;color:rgba(255,107,0,0.55);margin:8px 0 4px 2px;">ADMINISTRASI</p>', unsafe_allow_html=True)
+        page_adm = st.radio("nav_adm",[
+            "👥   Manajemen User",
+            "—",
+        ], label_visibility="collapsed", index=1)
+        if page_adm != "—": page = page_adm
     else:
-        menu_options = ["🏠 Dashboard", "📚 Materi Belajar", "⚙️ Ujian Teori", "📊 Nilai Saya"]
-        
-    choice = st.sidebar.radio("NAVIGASI LMS", menu_options)
-    
-    st.sidebar.markdown("---")
-    auth.render_logout_button()
-    
-    # Routing Halaman Menu
-    if "Dashboard" in choice:
-        dashboard.render_dashboard()
-    elif "Materi" in choice:
-        materi.render_materi()
-    elif "Bank Soal" in choice:
-        soal.render_bank_soal()
-    elif "Ujian Teori" in choice:
-        ujian.render_ujian()
-    elif "Penilaian Praktik" in choice:
-        praktik.render_penilaian_praktik()
-    elif "Rekap Nilai" in choice or "Nilai Saya" in choice:
-        nilai.render_rekap_nilai()
-    elif "Kelola Pengguna" in choice:
-        auth.render_user_management()
+        st.markdown('<p style="font-size:0.65rem;font-weight:700;letter-spacing:2px;color:rgba(255,107,0,0.55);margin:0 0 4px 2px;">MENU SISWA</p>', unsafe_allow_html=True)
+        page = st.radio("nav_s", [
+            "🏠   Dashboard",
+            "📚   Materi & Jobsheet",
+            "✏️   Ujian Online",
+            "🔧   Nilai Praktik",
+            "📊   Nilai Akhir Saya",
+        ], label_visibility="collapsed")
+        page_adm = "—"
+
+    st.divider()
+    render_logout_button()
+    st.markdown('<p style="text-align:center;color:#2A3B55;font-size:0.67rem;padding-top:6px;">v5.0 · Offline Ready<br>© 2025 SMK N 6 Batam</p>', unsafe_allow_html=True)
+
+# ── ROUTER ────────────────────────────────────────────────────────────────────
+p = page.strip()
+if isGuru():
+    if    "Dashboard"         in p: render_dashboard()
+    elif  "Materi"            in p: render_materi_page()
+    elif  "Bank Soal"         in p: render_soal_page()
+    elif  "Kelola Ujian"      in p: render_ujian_page()
+    elif  "Penilaian Praktik" in p: render_praktik_page()
+    elif  "Nilai Akhir"       in p: render_nilai_page()
+    elif  "Statistik"         in p: render_statistik_page()
+    elif  "Manajemen User"    in p: render_user_management()
+else:
+    if    "Dashboard"         in p: render_dashboard()
+    elif  "Materi"            in p: render_materi_siswa()
+    elif  "Ujian Online"      in p: render_ujian_page()
+    elif  "Nilai Praktik"     in p: render_praktik_page()
+    elif  "Nilai Akhir"       in p: render_nilai_page()
