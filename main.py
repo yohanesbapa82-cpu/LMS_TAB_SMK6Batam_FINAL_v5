@@ -6,7 +6,6 @@ st.set_page_config(
     page_icon="⚙️",
     layout="wide",
     initial_sidebar_state="expanded",
-)
 
 from database import init_database
 from auth import (
