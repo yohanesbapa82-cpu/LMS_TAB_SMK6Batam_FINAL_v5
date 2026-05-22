@@ -72,7 +72,7 @@ def _rekap_nilai():
             df = df[df["Kelas"]==sel_kelas]
 
     st.dataframe(df.drop(columns=["id"]).reset_index(drop=True),
-                 use_container_width=True, hide_index=True)
+                 width="stretch", hide_index=True)
 
 def _perbandingan():
     df = _get_df_nilai()
@@ -151,7 +151,7 @@ def _export():
     with c1:
         st.download_button("📄 Download CSV",
             df.to_csv(index=False).encode("utf-8-sig"),
-            "nilai_akhir.csv","text/csv", use_container_width=True)
+            "nilai_akhir.csv","text/csv", width="stretch")
     with c2:
         try:
             import openpyxl, io
@@ -161,13 +161,13 @@ def _export():
             st.download_button("📊 Download Excel", buf.getvalue(),
                 "nilai_akhir.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True)
+                width="stretch")
         except ImportError:
             st.info("Install openpyxl untuk export Excel.")
 
     st.divider()
     st.subheader("👁️ Preview Data")
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
 
 # ─── SISWA ────────────────────────────────────────────────────────────────────
 

@@ -1,5 +1,6 @@
 """auth.py — Login, logout, session, manajemen user"""
 import streamlit as st
+import streamlit.components.v1 as components
 from database import verify_password, get_user_by_username, create_user, update_user_password, get_user_by_id
 
 def init_session_state():
@@ -36,7 +37,7 @@ def require_login():
     if not isLoggedIn(): show_login_page(); st.stop()
 
 def show_login_page():
-   """Tampilan login page dengan logo TAB SMK N 6 Batam."""
+    """Tampilan login page dengan logo TAB SMK N 6 Batam."""
     from utils import apply_custom_style, TAB_LOGO_SVG
     # Menjalankan styling bawaan utils
     apply_custom_style()
@@ -44,26 +45,17 @@ def show_login_page():
     col_l, col_c, col_r = st.columns([1, 1.3, 1])
     with col_c:
         # Logo + judul
-        st.markdown(f"""
-        <div style="text-align:center;padding:2rem 0 1.5rem;
-                    background:linear-gradient(135deg,#0D1B2A,#1C2E40);
-                    border-radius:18px;border:1px solid rgba(255,140,0,.25);
-                    margin-bottom:1.2rem;box-shadow:0 8px 32px rgba(0,0,0,.3);">
-            <div style="border-bottom:1px solid rgba(255,140,0,.2);
-                        padding-bottom:1rem;margin-bottom:1rem;">
-                {TAB_LOGO_SVG}
-            </div>
-            <h2 style="color:#FF8C00;margin:0;font-weight:700;font-size:1.5rem;">LMS TEKNIK ALAT BERAT</h2>
-            <p style="color:#A0B4C8;margin:5px 0 0;font-size:0.9rem;">SMK Negeri 6 Batam</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(TAB_LOGO_SVG, unsafe_allow_html=True)
+        st.markdown("# LMS TEKNIK ALAT BERAT")
+        st.markdown("SMK Negeri 6 Batam")
+        st.markdown("_TEKNIK ALAT BERAT_")
 
         # Form login
         with st.form("login_form", clear_on_submit=False):
             st.markdown("**🔐 Masuk ke Sistem**")
             username = st.text_input("👤 Username", placeholder="Username Anda")
             password = st.text_input("🔒 Password", type="password", placeholder="Password")
-            submitted = st.form_submit_button("🚀 Login", use_container_width=True, type="primary")
+            submitted = st.form_submit_button("🚀 Login", type="primary", width="stretch")
             if submitted:
                 if not username or not password:
                     st.warning("⚠️ Isi username dan password!")
@@ -73,7 +65,7 @@ def show_login_page():
                 else:
                     st.error("❌ Username atau password salah!")
 
-        st.markdown("""
+        components.html("""
         <div style="background:rgba(255,140,0,.06);border-radius:10px;padding:.9rem 1rem;
                     margin-top:1rem;border:1px solid rgba(255,140,0,.15);font-size:.82rem;">
             <b style="color:#FF8C00;">⬡ Cara Login:</b><br>
@@ -83,11 +75,11 @@ def show_login_page():
             🔒 Password: <code>guru123</code> / <code>siswa123</code>
             </span>
         </div>
-        """, unsafe_allow_html=True)
+        """, height=170, scrolling=False)
 
 
 def render_logout_button():
-    if st.sidebar.button("🚪  Logout", use_container_width=True):
+    if st.sidebar.button("🚪  Logout", width="stretch"):
         logout_user(); st.rerun()
 
 def render_user_info():
@@ -127,11 +119,11 @@ def render_user_management():
             df_g = pd.DataFrame(guru_list)[["username","nama_lengkap","created_at"]]
             df_g.columns = ["Username","Nama Lengkap","Tgl Daftar"]
             df_g["Tgl Daftar"] = df_g["Tgl Daftar"].apply(lambda x:str(x)[:10])
-            st.dataframe(df_g,use_container_width=True,hide_index=True)
+            st.dataframe(df_g,width="stretch",hide_index=True)
             st.markdown(f"### 👷 Siswa ({len(siswa_list)} orang)")
             df_s = pd.DataFrame(siswa_list)[["nis","nama_lengkap","username","kelas"]]
             df_s.columns = ["NIS","Nama Lengkap","Username","Kelas"]
-            st.dataframe(df_s,use_container_width=True,hide_index=True)
+            st.dataframe(df_s,width="stretch",hide_index=True)
             st.download_button("📥 Export Daftar Siswa",
                 df_s.to_csv(index=False).encode("utf-8-sig"),
                 "daftar_siswa.csv","text/csv")
@@ -148,7 +140,7 @@ def render_user_management():
                 kelas    = st.text_input("Kelas",placeholder="XI TAB")
                 password = st.text_input("Password *",type="password",value="siswa123")
                 konfirm  = st.text_input("Konfirmasi *",type="password",value="siswa123")
-            save = st.form_submit_button("💾 Simpan",type="primary",use_container_width=True)
+            save = st.form_submit_button("💾 Simpan",type="primary",width="stretch")
             if save:
                 errs=[]
                 if not nama:     errs.append("Nama wajib diisi")
@@ -172,7 +164,7 @@ def render_user_management():
             sel   = st.selectbox("Pilih Pengguna *",list(umap.keys()))
             new_pw= st.text_input("Password Baru *",type="password",placeholder="Min. 6 karakter")
             kon2  = st.text_input("Konfirmasi *",type="password")
-            if st.form_submit_button("🔄 Reset Password",type="primary",use_container_width=True):
+            if st.form_submit_button("🔄 Reset Password",type="primary",width="stretch"):
                 if not new_pw or len(new_pw)<6:
                     st.error("❌ Password minimal 6 karakter!")
                 elif new_pw!=kon2:

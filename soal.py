@@ -70,11 +70,11 @@ def render_daftar_soal():
 
                 bc1,bc2,_ = st.columns([1,1,4])
                 with bc1:
-                    if st.button("✏️ Edit", key=f"es_{soal['id']}", use_container_width=True):
+                    if st.button("✏️ Edit", key=f"es_{soal['id']}", width="stretch"):
                         st.session_state.edit_soal_id = soal["id"]
                         st.rerun()
                 with bc2:
-                    if st.button("🗑️ Hapus", key=f"ds_{soal['id']}", use_container_width=True):
+                    if st.button("🗑️ Hapus", key=f"ds_{soal['id']}", width="stretch"):
                         if delete_soal(soal["id"]):
                             show_success("Soal dihapus.")
                             st.rerun()
@@ -106,8 +106,8 @@ def _render_edit_soal(soal_id):
         opts = ["A","B","C","D"]
         jwb  = st.radio("Jawaban Benar *", opts, index=opts.index(soal["jawaban_benar"]), horizontal=True)
         s1,s2 = st.columns(2)
-        with s1: save   = st.form_submit_button("💾 Simpan", type="primary", use_container_width=True)
-        with s2: cancel = st.form_submit_button("❌ Batal", use_container_width=True)
+        with s1: save   = st.form_submit_button("💾 Simpan", type="primary", width="stretch")
+        with s2: cancel = st.form_submit_button("❌ Batal", width="stretch")
         if save:
             if not pertanyaan.strip():
                 show_error("Pertanyaan wajib diisi!")
@@ -141,7 +141,7 @@ def render_tambah_soal():
             cc = st.text_input("C.", placeholder="Opsi C")
             d  = st.text_input("D.", placeholder="Opsi D")
         jwb  = st.radio("Jawaban Benar *", ["A","B","C","D"], horizontal=True)
-        save = st.form_submit_button("💾 Simpan Soal", type="primary", use_container_width=True)
+        save = st.form_submit_button("💾 Simpan Soal", type="primary", width="stretch")
         if save:
             errs = []
             if not pertanyaan.strip(): errs.append("Pertanyaan wajib diisi")
@@ -170,6 +170,6 @@ def _render_statistik_soal():
     data = [{"Materi": m["judul"], "Kategori": m["kategori"],
               "Jumlah Soal": get_soal_count_by_materi(m["id"])} for m in materi_list]
     df = pd.DataFrame(data).sort_values("Jumlah Soal", ascending=False)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
     from utils import bar_chart_nilai
     bar_chart_nilai({r["Materi"][:20]: r["Jumlah Soal"] for r in data}, "Distribusi Soal per Materi")

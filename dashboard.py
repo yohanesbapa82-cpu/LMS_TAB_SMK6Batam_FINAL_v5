@@ -1,5 +1,6 @@
 """dashboard.py — Dashboard bento-grid interaktif V5"""
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 from database import (
     get_total_siswa, get_total_materi, get_total_soal,
@@ -139,29 +140,29 @@ def _guru_dashboard():
             bar_w = int(na) if na else 0
             bar_c = "#059669" if na>=80 else ("#D97706" if na>=70 else ("#FF6B00" if na>=60 else "#DC2626"))
             rows_html += f"""
-            <tr style="border-bottom:1px solid #F3F4F6;">
-                <td style="padding:7px 8px;font-size:1rem;">{medal}</td>
-                <td style="padding:7px 4px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F3F4F6;min-width:520px;">
+                <div style="width:48px;flex-shrink:0;font-size:1rem;">{medal}</div>
+                <div style="flex:1;min-width:0;overflow:hidden;">
                     <div style="font-size:0.83rem;font-weight:600;color:#111827;
-                                white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-                                max-width:160px;">{r['nama']}</div>
+                                white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{r['nama']}</div>
                     <div style="font-size:0.7rem;color:#9CA3AF;">{r.get('kelas','')}</div>
-                </td>
-                <td style="padding:7px 8px;">
+                </div>
+                <div style="width:160px;flex-shrink:0;">
                     <div style="background:#F3F4F6;border-radius:99px;height:6px;min-width:60px;">
                         <div style="background:{bar_c};height:6px;border-radius:99px;width:{bar_w}%;"></div>
                     </div>
-                </td>
-                <td style="padding:7px 8px;text-align:right;">
+                </div>
+                <div style="width:92px;flex-shrink:0;text-align:right;">
                     <span style="background:{'#D1FAE5' if na>=80 else ('#FEF3C7' if na>=70 else ('#FEE2E2' if na>0 else '#F3F4F6'))};
                                  color:{'#065F46' if na>=80 else ('#92400E' if na>=70 else ('#991B1B' if na>0 else '#9CA3AF'))};
-                                 padding:2px 9px;border-radius:20px;font-size:0.78rem;font-weight:700;">
+                                 padding:2px 9px;border-radius:20px;font-size:0.78rem;font-weight:700;display:inline-block;">
                         {f'{na:.1f}' if na>0 else '—'}
                     </span>
-                </td>
-            </tr>
+                </div>
+            </div>
             """
-        st.markdown(f"""
+        ranking_height = min(520, 140 + len(ranking[:8]) * 52)
+        components.html(f"""
         <div style="background:white;border-radius:14px;padding:1.2rem 1.4rem;
                     box-shadow:0 2px 10px rgba(0,0,0,0.07);height:100%;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -169,17 +170,20 @@ def _guru_dashboard():
                 <span style="background:#FFF3E8;color:#FF6B00;padding:2px 10px;border-radius:20px;
                              font-size:0.72rem;font-weight:600;">{len(ranking)} siswa</span>
             </div>
-            <table style="width:100%;border-collapse:collapse;">
-                <thead><tr style="background:#F9FAFB;">
-                    <th style="padding:6px 8px;font-size:0.7rem;color:#6B7280;font-weight:600;text-align:left;">#</th>
-                    <th style="padding:6px 4px;font-size:0.7rem;color:#6B7280;font-weight:600;text-align:left;">NAMA</th>
-                    <th style="padding:6px 8px;font-size:0.7rem;color:#6B7280;font-weight:600;text-align:left;">PROGRES</th>
-                    <th style="padding:6px 8px;font-size:0.7rem;color:#6B7280;font-weight:600;text-align:right;">NILAI</th>
-                </tr></thead>
-                <tbody>{rows_html}</tbody>
-            </table>
+            <div style="overflow-x:auto;">
+                <div style="min-width:520px;">
+                    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F3F4F6;
+                                font-size:0.7rem;color:#6B7280;font-weight:600;">
+                        <div style="width:48px;flex-shrink:0;">#</div>
+                        <div style="flex:1;min-width:0;">NAMA</div>
+                        <div style="width:160px;flex-shrink:0;">PROGRES</div>
+                        <div style="width:92px;flex-shrink:0;text-align:right;">NILAI</div>
+                    </div>
+                    {rows_html}
+                </div>
+            </div>
         </div>
-        """, unsafe_allow_html=True)
+        """, height=ranking_height, scrolling=True)
 
     # Tile 2 — Aktivitas terbaru
     with col_b:
@@ -232,7 +236,7 @@ def _guru_dashboard():
         belum_cnt  = sum(1 for s in siswa_list if get_nilai_akhir(s["id"]) == 0)
         pct_lulus  = int(lulus_cnt/len(siswa_list)*100) if siswa_list else 0
 
-        st.markdown(f"""
+        html = f"""
         <div style="background:{C_NAVY};border-radius:14px;padding:1.2rem 1.4rem;
                     box-shadow:0 4px 16px rgba(28,43,74,0.18);height:100%;
                     display:flex;flex-direction:column;gap:14px;">
@@ -262,7 +266,8 @@ def _guru_dashboard():
                 <div style="font-size:0.72rem;color:#FFB070;">Kelas XI TAB</div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
+        components.html(html, height=320, scrolling=False)
 
     st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
 
@@ -330,7 +335,7 @@ def _tabel_nilai_guru():
             "Nilai Akhir": round(na,1),
             "Grade":       get_grade_letter(na),
             "Predikat":    get_predikat(na),
-            "Status":      "✅ Lulus" if na>=75 else ("⚠️ Remedial" if na>0 else "⏳ Belum"),
+            "Status":      "✅ Lulus" if na>=75 else ("⚠️ Remedial" if na>0 else "⏳ Belum Ujian"),
         })
 
     df = pd.DataFrame(rows).sort_values("Nilai Akhir", ascending=False)
@@ -369,7 +374,7 @@ def _tabel_nilai_guru():
     with col_e1:
         st.download_button("📥 Export CSV",
             df.to_csv(index=False).encode("utf-8-sig"),
-            "nilai_siswa.csv","text/csv", use_container_width=True)
+            "nilai_siswa.csv","text/csv", width="stretch")
     with col_e2:
         try:
             import io, openpyxl
@@ -378,7 +383,7 @@ def _tabel_nilai_guru():
                 df.to_excel(w, index=False, sheet_name="Nilai Siswa")
             st.download_button("📊 Export Excel", buf.getvalue(),
                 "nilai_siswa.xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True)
+                width="stretch")
         except ImportError:
             pass
 
@@ -389,48 +394,62 @@ def _render_custom_table(df):
         st.info("Tidak ada data yang cocok.")
         return
 
+    def normalize_status_label(status):
+        if status is None:
+            return "⏳ Belum Ujian"
+        status = str(status).strip()
+        if status.lower() in ("belum", "belum ujian", "belum dinilai", "⏳ belum", "⏳ belum ujian"):
+            return "⏳ Belum Ujian"
+        return status
+
     status_style = {
-        "✅ Lulus":    ("background:#D1FAE5;color:#065F46","✅"),
-        "⚠️ Remedial": ("background:#FEF3C7;color:#92400E","⚠️"),
-        "⏳ Belum":    ("background:#F3F4F6;color:#6B7280","⏳"),
+        "✅ Lulus":      ("background:#D1FAE5;color:#065F46","✅"),
+        "⚠️ Remedial":   ("background:#FEF3C7;color:#92400E","⚠️"),
+        "⏳ Belum Ujian": ("background:#F3F4F6;color:#6B7280","⏳"),
     }
 
     rows_html = ""
     for _, row in df.iterrows():
-        na     = row["Nilai Akhir"]
-        st_css, _ = status_style.get(row["Status"], ("background:#F3F4F6;color:#6B7280",""))
-        bar_w  = int(na) if na else 0
-        bar_c  = "#059669" if na>=80 else ("#D97706" if na>=70 else ("#FF6B00" if na>=60 else "#DC2626"))
-        grade  = row["Grade"]
-        g_css  = {
+        nis      = row.get("NIS", row.get("nis", "—"))
+        nama     = row.get("Nama Siswa", row.get("Nama", row.get("nama_lengkap", "—")))
+        kelas    = row.get("Kelas", "")
+        teori    = row.get("Nilai Teori", row.get("Teori", 0))
+        praktik  = row.get("Nilai Praktik", row.get("Praktik", 0))
+        na       = row.get("Nilai Akhir", 0)
+        status_text = normalize_status_label(row.get("Status", None))
+        st_css, _   = status_style.get(status_text, ("background:#F3F4F6;color:#6B7280",""))
+        bar_w       = int(na) if na else 0
+        bar_c       = "#059669" if na>=80 else ("#D97706" if na>=70 else ("#FF6B00" if na>=60 else "#DC2626"))
+        grade       = row.get("Grade", "—")
+        g_css       = {
             "A":"background:#D1FAE5;color:#065F46",
             "B":"background:#DBEAFE;color:#1E40AF",
             "C":"background:#FEF3C7;color:#92400E",
             "D":"background:#FEE2E2;color:#991B1B",
             "E":"background:#FEE2E2;color:#991B1B",
             "—":"background:#F3F4F6;color:#9CA3AF",
-        }.get(grade,"background:#F3F4F6;color:#9CA3AF")
+        }.get(grade, "background:#F3F4F6;color:#9CA3AF")
 
         rows_html += f"""
         <tr style="border-bottom:1px solid #F3F4F6;transition:background .15s;"
             onmouseover="this.style.background='#FFF9F5'"
             onmouseout="this.style.background='white'">
             <td style="padding:10px 12px;font-size:0.8rem;font-weight:600;
-                       color:#6B7280;">{row['NIS']}</td>
+                       color:#6B7280;">{nis}</td>
             <td style="padding:10px 12px;">
-                <div style="font-size:0.87rem;font-weight:600;color:#111827;">{row['Nama Siswa']}</div>
-                <div style="font-size:0.72rem;color:#9CA3AF;">{row['Kelas']}</div>
+                <div style="font-size:0.87rem;font-weight:600;color:#111827;">{nama}</div>
+                <div style="font-size:0.72rem;color:#9CA3AF;">{kelas}</div>
             </td>
             <td style="padding:10px 12px;text-align:center;">
                 <span style="font-size:0.87rem;font-weight:600;
-                             color:{'#DC2626' if row['Nilai Teori']==0 else '#1C2B4A'};">
-                    {row['Nilai Teori'] if row['Nilai Teori']>0 else '—'}
+                             color:{'#DC2626' if teori==0 else '#1C2B4A'};">
+                    {teori if teori>0 else '—'}
                 </span>
             </td>
             <td style="padding:10px 12px;text-align:center;">
                 <span style="font-size:0.87rem;font-weight:600;
-                             color:{'#DC2626' if row['Nilai Praktik']==0 else '#1C2B4A'};">
-                    {row['Nilai Praktik'] if row['Nilai Praktik']>0 else '—'}
+                             color:{'#DC2626' if praktik==0 else '#1C2B4A'};">
+                    {praktik if praktik>0 else '—'}
                 </span>
             </td>
             <td style="padding:10px 16px;min-width:130px;">
@@ -447,41 +466,46 @@ def _render_custom_table(df):
             </td>
             <td style="padding:10px 12px;text-align:center;">
                 <span style="padding:3px 10px;border-radius:20px;font-size:0.75rem;
-                             font-weight:600;{st_css};">{row['Status']}</span>
+                             font-weight:600;{st_css};">{status_text}</span>
             </td>
         </tr>
         """
 
-    st.markdown(f"""
+    html = f"""
     <div style="background:white;border-radius:14px;overflow:hidden;
                 box-shadow:0 2px 10px rgba(0,0,0,0.07);margin-bottom:12px;">
-        <table style="width:100%;border-collapse:collapse;">
-            <thead>
-                <tr style="background:linear-gradient(135deg,#1C2B4A,#243960);">
-                    <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:left;letter-spacing:0.5px;">NIS</th>
-                    <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:left;letter-spacing:0.5px;">NAMA SISWA</th>
-                    <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:center;letter-spacing:0.5px;">TEORI</th>
-                    <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:center;letter-spacing:0.5px;">PRAKTIK</th>
-                    <th style="padding:11px 16px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:left;letter-spacing:0.5px;">NILAI AKHIR</th>
-                    <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:center;letter-spacing:0.5px;">GRADE</th>
-                    <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
-                               color:#8CA0B8;text-align:center;letter-spacing:0.5px;">STATUS</th>
-                </tr>
-            </thead>
-            <tbody>{rows_html}</tbody>
-        </table>
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:linear-gradient(135deg,#1C2B4A,#243960);">
+                        <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:left;letter-spacing:0.5px;">NIS</th>
+                        <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:left;letter-spacing:0.5px;">NAMA SISWA</th>
+                        <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:center;letter-spacing:0.5px;">TEORI</th>
+                        <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:center;letter-spacing:0.5px;">PRAKTIK</th>
+                        <th style="padding:11px 16px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:left;letter-spacing:0.5px;">NILAI AKHIR</th>
+                        <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:center;letter-spacing:0.5px;">GRADE</th>
+                        <th style="padding:11px 12px;font-size:0.72rem;font-weight:700;
+                                   color:#8CA0B8;text-align:center;letter-spacing:0.5px;">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>{rows_html}</tbody>
+            </table>
+        </div>
         <div style="padding:8px 12px;background:#F9FAFB;border-top:1px solid #F3F4F6;
                     font-size:0.75rem;color:#9CA3AF;text-align:right;">
             Menampilkan {len(df)} dari {len(get_all_siswa())} siswa
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    height = min(max(420, len(df) * 60), 900)
+    components.html(html, height=height, scrolling=True)
 
 
 def _grafik_guru():
@@ -776,9 +800,14 @@ def render_statistik_page():
     data=[]
     for s in siswa_list:
         rt,rp,na = get_rata_nilai_teori(s["id"]),get_rata_nilai_praktik(s["id"]),get_nilai_akhir(s["id"])
-        data.append({"Nama":s["nama_lengkap"],"Kelas":s.get("kelas",""),
-                     "Teori":round(rt,1),"Praktik":round(rp,1),"Nilai Akhir":round(na,1),
-                     "Grade":get_grade_letter(na),"Status":"Lulus" if na>=75 else ("Remedial" if na>0 else "Belum")})
+        data.append({"NIS": s.get("nis","—"),
+                     "Nama Siswa": s["nama_lengkap"],
+                     "Kelas": s.get("kelas",""),
+                     "Nilai Teori": round(rt,1),
+                     "Nilai Praktik": round(rp,1),
+                     "Nilai Akhir": round(na,1),
+                     "Grade": get_grade_letter(na),
+                     "Status": "✅ Lulus" if na>=75 else ("⚠️ Remedial" if na>0 else "⏳ Belum Ujian")})
     df=pd.DataFrame(data).sort_values("Nilai Akhir",ascending=False)
 
     c1,c2,c3,c4 = st.columns(4)
@@ -790,15 +819,18 @@ def render_statistik_page():
     st.divider()
     tab1,tab2,tab3 = st.tabs(["📊 Grafik","📋 Tabel","📥 Export"])
     with tab1:
-        bar_chart_nilai(dict(zip(df["Nama"].apply(lambda x:x.split()[0]),df["Nilai Akhir"])),
-                        "Distribusi Nilai Akhir Siswa XI TAB")
+        name_col = "Nama" if "Nama" in df.columns else "Nama Siswa"
+        bar_chart_nilai(
+            dict(zip(df[name_col].apply(lambda x: x.split()[0]), df["Nilai Akhir"])),
+            "Distribusi Nilai Akhir Siswa XI TAB"
+        )
     with tab2:
         _render_custom_table(df.rename(columns={"Teori":"Nilai Teori","Praktik":"Nilai Praktik"}))
     with tab3:
         c1,c2=st.columns(2)
         with c1:
             st.download_button("📥 CSV",df.to_csv(index=False).encode("utf-8-sig"),
-                               "statistik.csv","text/csv",use_container_width=True)
+                               "statistik.csv","text/csv",width="stretch")
         with c2:
             try:
                 import io,openpyxl; buf=io.BytesIO()
@@ -806,7 +838,7 @@ def render_statistik_page():
                     df.to_excel(w,index=False,sheet_name="Statistik")
                 st.download_button("📊 Excel",buf.getvalue(),"statistik.xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True)
+                    width="stretch")
             except: pass
 
 

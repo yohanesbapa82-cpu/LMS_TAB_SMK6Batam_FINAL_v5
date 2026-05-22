@@ -79,26 +79,26 @@ def _guru_daftar():
             with col_a:
                 st.markdown("**Aksi:**")
                 if j["status"] == "draft":
-                    if st.button("🟢 Aktifkan", key=f"ak_{j['id']}", use_container_width=True, type="primary"):
+                    if st.button("🟢 Aktifkan", key=f"ak_{j['id']}", width="stretch", type="primary"):
                         set_status_ujian(j["id"], "aktif")
                         show_success("Ujian diaktifkan! Siswa bisa akses.")
                         st.rerun()
                 elif j["status"] == "aktif":
-                    if st.button("🔴 Tutup", key=f"tu_{j['id']}", use_container_width=True):
+                    if st.button("🔴 Tutup", key=f"tu_{j['id']}", width="stretch"):
                         set_status_ujian(j["id"], "selesai")
                         show_warning("Ujian ditutup.")
                         st.rerun()
-                    if st.button("↩️ Draft", key=f"dr_{j['id']}", use_container_width=True):
+                    if st.button("↩️ Draft", key=f"dr_{j['id']}", width="stretch"):
                         set_status_ujian(j["id"], "draft"); st.rerun()
                 elif j["status"] == "selesai":
-                    if st.button("🔄 Buka Lagi", key=f"bk_{j['id']}", use_container_width=True):
+                    if st.button("🔄 Buka Lagi", key=f"bk_{j['id']}", width="stretch"):
                         set_status_ujian(j["id"], "aktif")
                         show_success("Ujian dibuka kembali."); st.rerun()
 
-                if st.button("✏️ Edit", key=f"ed_{j['id']}", use_container_width=True):
+                if st.button("✏️ Edit", key=f"ed_{j['id']}", width="stretch"):
                     st.session_state.edit_jadwal_id = j["id"]; st.rerun()
 
-                if st.button("🗑️ Hapus", key=f"dj_{j['id']}", use_container_width=True):
+                if st.button("🗑️ Hapus", key=f"dj_{j['id']}", width="stretch"):
                     st.session_state[f"kd_{j['id']}"] = True
 
                 if st.session_state.get(f"kd_{j['id']}"):
@@ -151,7 +151,7 @@ def _guru_buat():
             jam_s  = st.time_input("🕐 Jam Selesai *",    value=datetime.time(10,0))
 
         st.info("💡 Setelah simpan, status = **DRAFT**. Aktifkan manual agar siswa bisa akses.")
-        save = st.form_submit_button("💾 Simpan Jadwal", type="primary", use_container_width=True)
+        save = st.form_submit_button("💾 Simpan Jadwal", type="primary", width="stretch")
 
         if save:
             dt_m = datetime.datetime.combine(tgl_m, jam_m)
@@ -196,8 +196,8 @@ def _form_edit(jid):
             tgl_s  = st.date_input("Tgl Selesai", value=ds.date())
             jam_s  = st.time_input("Jam Selesai", value=ds.time())
         b1,b2 = st.columns(2)
-        with b1: save   = st.form_submit_button("💾 Simpan", type="primary", use_container_width=True)
-        with b2: cancel = st.form_submit_button("❌ Batal",  use_container_width=True)
+        with b1: save   = st.form_submit_button("💾 Simpan", type="primary", width="stretch")
+        with b2: cancel = st.form_submit_button("❌ Batal",  width="stretch")
         if save:
             update_ujian_jadwal(jid, judul.strip(), mat_opts[sel_m], int(durasi), int(max_soal),
                                 1 if acak else 0,
@@ -255,7 +255,7 @@ def _guru_hasil():
         disp = df[["nama_siswa","nis","kelas","benar","total_soal","skor","Grade","Status","Waktu"]].rename(
             columns={"nama_siswa":"Nama","nis":"NIS","kelas":"Kelas",
                      "benar":"Benar","total_soal":"Total","skor":"Nilai","Waktu":"Selesai"})
-        st.dataframe(disp, use_container_width=True, hide_index=True)
+        st.dataframe(disp, width="stretch", hide_index=True)
 
         from utils import bar_chart_nilai
         bar_chart_nilai({h["nama_siswa"].split()[0]:h["skor"] for h in hasil},
@@ -373,7 +373,7 @@ def _daftar_ujian():
             col_m,_ = st.columns([1,3])
             with col_m:
                 if st.button("🚀 Mulai Ujian", key=f"mulai_{j['id']}",
-                             type="primary", use_container_width=True):
+                             type="primary", width="stretch"):
                     _mulai_ujian(j)
 
 
@@ -452,8 +452,8 @@ def _active_exam():
             jawaban_dict[soal["id"]] = jwb
         st.divider()
         cs,cc = st.columns(2)
-        with cs: sub = st.form_submit_button("📤 Submit & Selesai",type="primary",use_container_width=True)
-        with cc: can = st.form_submit_button("🚫 Batalkan",use_container_width=True)
+        with cs: sub = st.form_submit_button("📤 Submit & Selesai",type="primary",width="stretch")
+        with cc: can = st.form_submit_button("🚫 Batalkan",width="stretch")
         if sub: _do_submit(soal_list, sesi_id, jawaban_dict)
         if can: _do_cancel()
 

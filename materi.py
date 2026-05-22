@@ -113,9 +113,9 @@ def _guru_daftar():
                             st.markdown(m["isi_materi"][:2000])
 
                 with col_b:
-                    if st.button("✏️ Edit",  key=f"eg_{m['id']}", use_container_width=True):
+                    if st.button("✏️ Edit",  key=f"eg_{m['id']}", width="stretch"):
                         st.session_state.edit_materi_id = m["id"]; st.rerun()
-                    if st.button("🗑️ Hapus", key=f"dg_{m['id']}", use_container_width=True):
+                    if st.button("🗑️ Hapus", key=f"dg_{m['id']}", width="stretch"):
                         # Hapus file fisik juga
                         if has_file:
                             try: os.remove(m["file_path"])
@@ -153,8 +153,8 @@ def _form_edit(mid):
                                      key=f"uf_edit_{mid}")
 
         b1,b2 = st.columns(2)
-        with b1: save   = st.form_submit_button("💾 Simpan", type="primary", use_container_width=True)
-        with b2: cancel = st.form_submit_button("❌ Batal", use_container_width=True)
+        with b1: save   = st.form_submit_button("💾 Simpan", type="primary", width="stretch")
+        with b2: cancel = st.form_submit_button("❌ Batal", width="stretch")
 
         if save:
             if not judul.strip():
@@ -206,7 +206,7 @@ def _guru_tambah():
         video = st.text_input("🎬 Link Video YouTube (opsional)",
                               placeholder="https://www.youtube.com/watch?v=...")
         st.caption("💡 Bisa kombinasikan: teks + file + video sekaligus")
-        save = st.form_submit_button("💾 Simpan Materi", type="primary", use_container_width=True)
+        save = st.form_submit_button("💾 Simpan Materi", type="primary", width="stretch")
 
         if save:
             if not judul.strip() or not tujuan.strip():
@@ -261,7 +261,7 @@ def _guru_jobsheet():
             col1, col2, _ = st.columns([1,1,2])
             with col1:
                 if st.button("🖨️ Print Jobsheet", key=f"print_js_{j['id']}",
-                             use_container_width=True, type="primary"):
+                             width="stretch", type="primary"):
                     st.session_state[f"show_print_{j['id']}"] = True
             with col2:
                 # Download sebagai teks
@@ -270,7 +270,7 @@ def _guru_jobsheet():
                     "⬇️ Download (.md)",
                     data=content_dl.encode("utf-8"),
                     file_name=f"{j['judul'].replace(' ','_')}.md",
-                    key=f"dl_js_{j['id']}", use_container_width=True
+                    key=f"dl_js_{j['id']}", width="stretch"
                 )
 
             if st.session_state.get(f"show_print_{j['id']}"):
@@ -384,7 +384,7 @@ def _siswa_materi_card(m, selesai_ids, sid):
                         f"⬇️ Download {m.get('file_type','File').upper()}",
                         data=f.read(),
                         file_name=os.path.basename(m["file_path"]),
-                        key=f"dl_sis_{m['id']}", use_container_width=True, type="primary"
+                        key=f"dl_sis_{m['id']}", width="stretch", type="primary"
                     )
 
         # Isi teks
@@ -436,7 +436,7 @@ def _siswa_jobsheet_card(m, selesai_ids, sid):
                         f"{ficon} Download Jobsheet",
                         data=f.read(),
                         file_name=os.path.basename(m["file_path"]),
-                        key=f"dl_js_sis_{m['id']}", use_container_width=True, type="primary"
+                        key=f"dl_js_sis_{m['id']}", width="stretch", type="primary"
                     )
 
         # Isi jobsheet
@@ -450,7 +450,7 @@ def _siswa_jobsheet_card(m, selesai_ids, sid):
                         "⬇️ Download (.md)",
                         data=m["isi_materi"].encode("utf-8"),
                         file_name=f"{m['judul'].replace(' ','_')}.md",
-                        key=f"dl_jstxt_{m['id']}", use_container_width=True
+                        key=f"dl_jstxt_{m['id']}", width="stretch"
                     )
 
         # Tandai selesai untuk jobsheet juga

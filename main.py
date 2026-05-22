@@ -1,5 +1,6 @@
 """main.py — LMS TAB SMK N6 Batam V5"""
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="LMS TAB — SMK N 6 Batam",
@@ -31,7 +32,7 @@ if not isLoggedIn():
 with st.sidebar:
 
     # Logo TAB
-    st.markdown(f"""
+    components.html(f"""
     <div style="text-align:center;padding:20px 0 14px;">
         {TAB_LOGO_SVG}
         <div style="margin-top:8px;">
@@ -40,7 +41,7 @@ with st.sidebar:
             <div style="font-size:0.62rem;color:rgba(255,107,0,0.55);margin-top:1px;letter-spacing:1px;">TEKNIK ALAT BERAT</div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """, height=220, scrolling=False)
 
     st.divider()
     render_user_info()

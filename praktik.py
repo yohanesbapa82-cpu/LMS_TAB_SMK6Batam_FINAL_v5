@@ -75,7 +75,7 @@ def _input_form():
         catatan = st.text_area("📝 Catatan / Observasi", placeholder="Catatan tambahan tentang performa siswa...")
         foto    = st.file_uploader("📷 Foto Bukti Praktik (opsional)", type=["jpg","jpeg","png"])
 
-        save = st.form_submit_button("💾 Simpan Nilai Praktik", type="primary", use_container_width=True)
+        save = st.form_submit_button("💾 Simpan Nilai Praktik", type="primary", width="stretch")
         if save:
             foto_path = ""
             if foto:
