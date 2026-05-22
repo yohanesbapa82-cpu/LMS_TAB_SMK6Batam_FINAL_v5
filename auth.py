@@ -38,7 +38,6 @@ def require_login():
 def show_login_page():
    """Tampilan login page dengan logo TAB SMK N 6 Batam."""
     from utils import apply_custom_style, TAB_LOGO_SVG
-    
     # Menjalankan styling bawaan utils
     apply_custom_style()
     
