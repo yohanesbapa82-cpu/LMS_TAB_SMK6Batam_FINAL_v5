@@ -36,8 +36,12 @@ def require_login():
     if not isLoggedIn(): show_login_page(); st.stop()
 
 def show_login_page():
-    """Tampilan login page dengan logo TAB SMK N 6 Batam."""
+   """Tampilan login page dengan logo TAB SMK N 6 Batam."""
     from utils import apply_custom_style, TAB_LOGO_SVG
+    
+    # Menjalankan styling bawaan utils
+    apply_custom_style()
+    
     col_l, col_c, col_r = st.columns([1, 1.3, 1])
     with col_c:
         # Logo + judul
@@ -48,22 +52,10 @@ def show_login_page():
                     margin-bottom:1.2rem;box-shadow:0 8px 32px rgba(0,0,0,.3);">
             <div style="border-bottom:1px solid rgba(255,140,0,.2);
                         padding-bottom:1rem;margin-bottom:1rem;">
-                {tab_logo(80)}
+                {TAB_LOGO_SVG}
             </div>
-            <div style="font-size:1.7rem;font-weight:800;color:#FF8C00;
-                        letter-spacing:3px;font-family:'Inter',sans-serif;">
-                LMS ALAT BERAT
-            </div>
-            <div style="font-size:.75rem;color:#6B8FAA;letter-spacing:2px;margin-top:4px;">
-                LEARNING MANAGEMENT SYSTEM
-            </div>
-            <div style="font-size:.82rem;color:#9CB3C9;font-weight:600;margin-top:6px;">
-                SMK NEGERI 6 BATAM
-            </div>
-            <div style="font-size:.68rem;color:rgba(255,140,0,.5);
-                        letter-spacing:3px;margin-top:2px;">
-                TEKNIK ALAT BERAT
-            </div>
+            <h2 style="color:#FF8C00;margin:0;font-weight:700;font-size:1.5rem;">LMS TEKNIK ALAT BERAT</h2>
+            <p style="color:#A0B4C8;margin:5px 0 0;font-size:0.9rem;">SMK Negeri 6 Batam</p>
         </div>
         """, unsafe_allow_html=True)
 
