@@ -1,19 +1,33 @@
 """main.py — LMS TAB SMK N6 Batam V5"""
 import streamlit as st
-import utils
-from database import init_database
-from auth import init_session_state, show_login_page, isLoggedIn, isGuru, render_user_info, render_logout_button, render_user_management
-from utils import apply_custom_style, TAB_LOGO_SVG
+import sys
 
-# Konfigurasi halaman diletakkan di baris tunggal setelah semua import beres
+# Mengamankan konfigurasi halaman di baris awal tunggal tanpa blok menggantung
 st.set_page_config(page_title="LMS TAB — SMK N 6 Batam", page_icon="⚙️", layout="wide", initial_sidebar_state="expanded")
-# ── SIDEBAR ───────────────────────────────────────────────────────────────────
-with st.sidebar:
 
-    # Logo TAB
-    st.markdown(f"""
-    <div style="text-align:center;padding:20px 0 14px;">
-        {TAB_LOGO_SVG}
+# Trik Bypass: Memasukkan modul langsung ke sistem runtime Python
+import utils
+database = __import__('database')
+auth = __import__('auth')
+dashboard = __import__('dashboard')
+materi = __import__('materi')
+soal = __import__('soal')
+ujian = __import__('ujian')
+praktik = __import__('praktik')
+nilai = __import__('nilai')
+
+# Mendefinisikan alias fungsi agar kode main.py Anda ke bawah tidak perlu diubah
+init_database = database.init_database
+init_session_state = auth.init_session_state
+show_login_page = auth.show_login_page
+isLoggedIn = auth.isLoggedIn
+isGuru = auth.isGuru
+render_user_info = auth.render_user_info
+render_logout_button = auth.render_logout_button
+render_user_management = auth.render_user_management
+apply_custom_style = utils.apply_custom_style
+TAB_LOGO_SVG = utils.TAB_LOGO_SVG
+{TAB_LOGO_SVG}
         <div style="margin-top:8px;">
             <div style="font-size:1.3rem;font-weight:700;color:#FF6B00;letter-spacing:2px;line-height:1;">TAB</div>
             <div style="font-size:0.68rem;color:#8CA0B8;letter-spacing:1.5px;margin-top:2px;">SMK NEGERI 6 BATAM</div>
