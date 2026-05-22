@@ -1,18 +1,11 @@
 """main.py — LMS TAB SMK N6 Batam V5"""
 import streamlit as st
-
-st.set_page_config(
-    page_title="LMS TAB — SMK N 6 Batam",
-    page_icon="⚙️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
+import utils
 from database import init_database
 from auth import init_session_state, show_login_page, isLoggedIn, isGuru, render_user_info, render_logout_button, render_user_management
 from utils import apply_custom_style, TAB_LOGO_SVG
-from materi import render_materi_page, render_materi_siswa
-from soal import render_soal_page
+
+st.set_page_config(page_title="LMS TAB — SMK N 6 Batam", page_icon="⚙️", layout="wide", initial_sidebar_state="expanded")
 from ujian import render_ujian_page
 from praktik import render_praktik_page
 from nilai import render_nilai_page
