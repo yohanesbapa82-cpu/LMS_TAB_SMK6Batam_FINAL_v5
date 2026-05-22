@@ -9,10 +9,8 @@ st.set_page_config(
 )
 
 from database import init_database
-from auth import (
-    init_session_state, show_login_page, isLoggedIn, isGuru,
-    render_user_info, render_logout_button, render_user_management
-)
+from auth import init_session_state, show_login_page, isLoggedIn, isGuru, render_user_info, render_logout_button, render_user_management
+from utils import apply_custom_style, TAB_LOGO_SVG
 from utils import apply_custom_style, TAB_LOGO_SVG
 from dashboard import render_dashboard, render_statistik_page
 from materi import render_materi_page, render_materi_siswa
