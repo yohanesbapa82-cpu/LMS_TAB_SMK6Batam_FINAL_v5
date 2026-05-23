@@ -77,7 +77,7 @@ with st.sidebar:
 
     st.divider()
     render_logout_button()
-    st.markdown('<p style="text-align:center;color:#2A3B55;font-size:0.67rem;padding-top:6px;">v5.0 · Offline Ready<br>© 2025 SMK N 6 Batam</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align:center;color:#2A3B55;font-size:0.67rem;padding-top:6px;">v5.0 · Offline Ready<br>© 2025 Yohanes SMK N 6 Batam</p>', unsafe_allow_html=True)
 
 # ── ROUTER ────────────────────────────────────────────────────────────────────
 p = page.strip()
